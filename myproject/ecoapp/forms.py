@@ -13,3 +13,7 @@ class ContactMesageForm(forms.ModelForm):
             'subject': TextInput(attrs={'class': 'input', 'placeholder': 'Subject'}),
             'message': TextInput(attrs={'class': 'input', 'placeholder': 'Message'}),
         }
+
+class SearchForm(forms.Form):
+    query = forms.CharField(max_length=200)
+    cat_id = forms.IntegerField()

@@ -79,22 +79,23 @@
                 <!-- Begin Header Middle Right Area -->
                 <div class="col-lg-9 pl-0 ml-sm-15 ml-xs-15">
                     <!-- Begin Header Middle Searchbox Area -->
-                    <form action="#" class="hm-searchbox">
-                        <select class="nice-select select-search-category">
+                    <form action="{% url 'SearchView' %}" class="hm-searchbox" method="post">
+                        {% csrf_token %}
+                        <select class="nice-select select-search-category" name="cat_id">
                             <option value="0">All</option>
                             {% load mptt_tags %}
                             {% recursetree category %}
-                            <option value="1">{{node.title}}</option>
-                                        {% if not node.is_leaf_node %}
-                            <option value="2">---{{children}}</option>
-                                        {% endif %}
+                            <option value="{{node.id}}">{{node.title}}</option>
+<!--                                         {% if not node.is_leaf_node %}
+                            <option label ="{{node.title}}">---{{children}}</option>
+                                        {% endif %} -->
                             {% endrecursetree %}
 
 
 
 
                         </select>
-                        <input type="text" placeholder="Enter your search key ...">
+                        <input type="text" placeholder="Enter your search key ..." name="query" id="query">
                         <button class="li-btn" type="submit"><i class="fa fa-search"></i></button>
                     </form>
                     <!-- Header Middle Searchbox Area End Here -->

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render,HttpResponse
 from .models import *
-from .forms import ContactMesageForm
+from .forms import ContactMesageForm,SearchForm
 # Create your views here.
 
 def about(request):
@@ -72,3 +72,25 @@ def contact(request):
         'form':form,
     }
     return render(request,'frontend/contact.html', context)
+
+def SearchView(request):
+    setting = Setting.objects.get(id=1)
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            cat_id = form.cleaned_data['cat_id']
+            if cat_id == 0:
+                product = Product.objects.filter(title__icontains=query)
+            else:
+                product = Product.objects.filter(title__icontains=query, category_id=cat_id)
+            category = Category.objects.all()
+            context = {
+                'category':category,
+                'product':product,
+                'query':query,
+                'setting':setting,
+
+            }
+            return render(request,'frontend/searchproduct.html', context)
+    return HttpResponseRedirect('home')
