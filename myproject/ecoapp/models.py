@@ -84,3 +84,13 @@ class Setting(models.Model):
 
     def __str__(self):
         return self.title
+
+class HeadBanner(models.Model):
+    status = (('True', 'True'), ('False', 'False'))
+    title = models.CharField(max_length=200)
+    sale_offer = models.CharField(max_length=200)
+    price = models.IntegerField()
+    image = models.ImageField(upload_to='banner/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title

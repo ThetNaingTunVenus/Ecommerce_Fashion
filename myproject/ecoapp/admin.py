@@ -1,6 +1,12 @@
 from django.contrib import admin
-from .models import Category,Product,Images,Setting
+from .models import Category,Product,Images,Setting,HeadBanner
 # Register your models here.
+
+class SettingAdmin(admin.ModelAdmin):
+    list_display = ['title','phone','email','address']
+
+class HeadBannerAdmin(admin.ModelAdmin):
+    list_display = ['title','sale_offer','price']
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title','status','created_at','update_at']
@@ -26,4 +32,5 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Images)
-admin.site.register(Setting)
+admin.site.register(HeadBanner,HeadBannerAdmin)
+admin.site.register(Setting,SettingAdmin)
