@@ -1,12 +1,12 @@
 from django.db import models
-
+from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
 from django.utils.safestring import mark_safe
 
 
-class Category(models.Model):
+class Category(MPTTModel):
     status=(('True','True'),('False','False'))
-    parent = models.ForeignKey('self',on_delete=models.CASCADE, null=True,blank=True, related_name='children')
+    parent = TreeForeignKey('self',on_delete=models.CASCADE, null=True,blank=True, related_name='children')
     title = models.CharField(max_length=200)
     keywords = models.CharField(max_length=200)
     image = models.ImageField(blank=True, upload_to='category/')
@@ -15,8 +15,13 @@ class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
+    class MPTTMeta:
+        order_insertion_by = ['title']
+
     def __str__(self):
         return self.title
+
+
 
 class Product(models.Model):
     status = (('True','True'),('False', 'False'))
@@ -94,3 +99,18 @@ class HeadBanner(models.Model):
 
     def __str__(self):
         return self.title
+
+class ContactMessage(models.Model):
+    status = (('New','New'),('Read','Read'),('Closed','Closed'))
+    name = models.CharField(max_length=200)
+    email = models.EmailField(max_length=50)
+    subject = models.CharField(max_length=200, blank=True, null=True)
+    message = models.CharField(max_length=200, blank=True, null=True)
+    status = models.CharField(max_length=50, choices=status, default='New')
+    ip = models.CharField(max_length=200, blank=True)
+    note = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
