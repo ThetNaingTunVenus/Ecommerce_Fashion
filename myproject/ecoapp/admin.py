@@ -1,6 +1,6 @@
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-from .models import Category,Product,Images,Setting,HeadBanner
+from .models import Category,Product,Images,Setting,HeadBanner,ContactMessage
 # Register your models here.
 
 class SettingAdmin(admin.ModelAdmin):
@@ -70,3 +70,4 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Images)
 admin.site.register(HeadBanner,HeadBannerAdmin)
 admin.site.register(Setting,SettingAdmin)
+admin.site.register(ContactMessage)

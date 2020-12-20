@@ -1,5 +1,8 @@
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import render,HttpResponse
 from .models import *
+from .forms import ContactMesageForm
 # Create your views here.
 
 def about(request):
@@ -44,3 +47,28 @@ def single_product(request,id):
         'category':category,
     }
     return render(request, 'frontend/single-product.html', context)
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactMesageForm(request.POST)
+        if form.is_valid():
+            data = ContactMessage()
+            data.name = form.cleaned_data['name']
+            data.email = form.cleaned_data['email']
+            data.subject = form.cleaned_data['subject']
+            data.message = form.cleaned_data['message']
+            data.ip = request.META.get('REMOTE_ADDR')
+            data.save()
+            # messages.success(request, 'Your Message Have been Sent')
+            return HttpResponseRedirect(reversed('contact'))
+
+    setting = Setting.objects.get(id=1)
+    category = Category.objects.all()
+    form = ContactMesageForm
+
+    context = {
+        'setting': setting,
+        'category': category,
+        'form':form,
+    }
+    return render(request,'frontend/contact.html', context)
