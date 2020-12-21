@@ -1,6 +1,6 @@
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-from .models import Category,Product,Images,Setting,HeadBanner,ContactMessage
+from .models import Category,Product,Images,Setting,HeadBanner,ContactMessage,ShopCart
 # Register your models here.
 
 class SettingAdmin(admin.ModelAdmin):
@@ -63,6 +63,9 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('title',)}
     inlines = [ProductImageInline]
 
+class ShopCartAdmin(admin.ModelAdmin):
+    list_display = ['product','user','quantity','price','amount']
+    list_filter = ['user']
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -71,3 +74,4 @@ admin.site.register(Images)
 admin.site.register(HeadBanner,HeadBannerAdmin)
 admin.site.register(Setting,SettingAdmin)
 admin.site.register(ContactMessage)
+admin.site.register(ShopCart,ShopCartAdmin)

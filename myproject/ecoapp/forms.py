@@ -17,3 +17,8 @@ class ContactMesageForm(forms.ModelForm):
 class SearchForm(forms.Form):
     query = forms.CharField(max_length=200)
     cat_id = forms.IntegerField()
+
+class ShoppingCartForm(forms.ModelForm):
+    class Meta:
+        model = ShopCart
+        fields = ['quantity']
