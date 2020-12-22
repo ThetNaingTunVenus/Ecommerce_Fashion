@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecoapp',
+    'userprofile',
     'mptt',
     'crispy_forms',
 ]
