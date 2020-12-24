@@ -1,6 +1,6 @@
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-from .models import Category,Product,Images,Setting,HeadBanner,ContactMessage,ShopCart
+from .models import Category,Product,Images,Setting,HeadBanner,ContactMessage,ShopCart,Order,OrderProduct,Comment
 # Register your models here.
 
 class SettingAdmin(admin.ModelAdmin):
@@ -67,6 +67,31 @@ class ShopCartAdmin(admin.ModelAdmin):
     list_display = ['product','user','quantity','price','amount']
     list_filter = ['user']
 
+class OrderProductInline(admin.TabularInline):
+    model = OrderProduct
+    # readonly_fields = ['user','product','price','quantity','amount']
+    # can_delete = False
+    extra = 0
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['user','full_name','phone','city','status']
+    list_filter = ['user']
+    can_delete = False
+    # readonly_fields = ['user','full_name','phone','city','total','ip','transaction_id','image_tag']
+    inlines = [OrderProductInline]
+
+
+class OrderProductAdmin(admin.ModelAdmin):
+    list_display = ['user','product','price','quantity','amount_now','status']
+    list_filter = ['user','product']
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['product','status','created_at','update_at','user']
+    list_filter = ['status','created_at']
+    list_per_page = 10
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -75,3 +100,6 @@ admin.site.register(HeadBanner,HeadBannerAdmin)
 admin.site.register(Setting,SettingAdmin)
 admin.site.register(ContactMessage)
 admin.site.register(ShopCart,ShopCartAdmin)
+admin.site.register(Order,OrderAdmin)
+admin.site.register(OrderProduct,OrderProductAdmin)
+admin.site.register(Comment,CommentAdmin)

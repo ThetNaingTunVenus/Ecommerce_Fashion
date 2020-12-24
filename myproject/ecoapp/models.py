@@ -125,10 +125,71 @@ class ShopCart(models.Model):
 
     def price(self):
         return self.product.new_price
-
+    @property
     def amount(self):
         return self.quantity*self.product.new_price
 
 
     def __str__(self):
         return self.product.title
+
+
+class Order(models.Model):
+    status = (('New', 'New'), ('Accepted', 'Accepted'), ('Prepared', 'Prepared'),('Completed','Completed'),('Cancelled','Cancelled'))
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=200)
+    code = models.CharField(max_length=200, editable=False)
+    phone = models.CharField(max_length=200, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=200)
+    country = models.CharField(max_length=200, blank=True)
+    total = models.IntegerField()
+    status = models.CharField(max_length=50, choices=status, default='New')
+    ip = models.CharField(max_length=200, blank=True)
+    transaction_id = models.CharField(max_length=200, blank=True)
+    transaction_image = models.ImageField(upload_to='transaction_img/', blank=True)
+    adminnote = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.full_name
+
+    def image_tag(self):
+        return mark_safe('<img src="{}" heights="50" width="40" />'.format(self.image.url))
+    image_tag.short_description = 'Image'
+
+
+class OrderProduct(models.Model):
+    status = (('New', 'New'), ('Accepted', 'Accepted'), ('Cancelled', 'Cancelled'))
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    price = models.IntegerField()
+    amount = models.IntegerField()
+    status = models.CharField(max_length=50, choices=status, default='New')
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.product.title
+
+    def amount_now(self):
+        return self.price*self.quantity
+
+
+class Comment(models.Model):
+    status = (('New','New'),('True','True'),('False','False'))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=200, blank=True)
+    comment = models.CharField(max_length=200, blank=True)
+    rate = models.IntegerField(default=1)
+    ip = models.CharField(max_length=200, blank=True)
+    status = models.CharField(max_length=50, choices=status, default='New')
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.subject

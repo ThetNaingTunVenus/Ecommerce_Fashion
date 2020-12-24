@@ -183,6 +183,138 @@
             </div>
             <!-- content-wraper end -->
             <!-- Begin Product Area -->
+                        <div class="product-area pt-35">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="li-product-tab">
+                                <ul class="nav li-product-menu">
+                                   <li><a class="active" data-toggle="tab" href="#reviews"><span>Reviews</span></a></li>
+
+                                   <!-- <li><a data-toggle="tab" href="#reviews"><span>Reviewsd</span></a></li> -->
+                                </ul>               
+                            </div>
+                            <!-- Begin Li's Tab Menu Content Area -->
+                        </div>
+                    </div>
+                    <div class="tab-content">
+<!--                         <div id="description" class="tab-pane active show" role="tabpanel">
+                            <div class="product-description">
+                                <span>The best is yet to come! Give your walls a voice with a framed poster. This aesthethic, optimistic poster will look great in your desk or in an open-space office. Painted wooden frame with passe-partout for more depth.</span>
+                            </div>
+                        </div> -->
+
+                        <div id="reviews" class="tab-pane active show" role="tabpanel">
+                            <div class="product-reviews">
+                                <div class="product-details-comment-block">
+                                    {% for c in comment_show %}
+                                     <div class="comment-author-infos pt-25">
+                                        <span>{{c.user.username}}</span>
+                                        
+                                    </div>
+                                    <div class="comment-review">
+                                        <span>Grade</span>
+                                        <ul class="rating">
+                                            <li><i class="fa fa-star{% if c.rate < 1 %}-o{% endif %}"></i></li>
+                                            <li><i class="fa fa-star{% if c.rate < 2 %}-o{% endif %}"></i></li>
+                                            <li><i class="fa fa-star{% if c.rate < 3 %}-o{% endif %}"></i></li>
+                                            <li><i class="fa fa-star{% if c.rate < 4 %}-o{% endif %}"></i></li>
+                                            <li><i class="fa fa-star{% if c.rate < 5 %}-o{% endif %}"></i></li>
+<!--                                             <li><i class="fa fa-star-o"></i></li>
+                                            <li><i class="fa fa-star-o"></i></li>
+                                            <li class="no-star"><i class="fa fa-star-o"></i></li>
+                                            <li class="no-star"><i class="fa fa-star-o"></i></li> -->
+                                        </ul>
+                                    </div>
+
+                                    <div class="comment-details">
+
+                                        <h4 class="title-block">Comment</h4><em>{{c.created_at}}</em>
+                                        <p>{{c.comment}}</p>
+                                    </div><hr>
+                                    {% endfor %}
+                                    <div class="review-btn">
+                                        <a class="review-links" href="#" data-toggle="modal" data-target="#mymodal">Write Your Review!</a>
+                                    </div>
+                                    <!-- Begin Quick View | Modal Area -->
+                                    <div class="modal fade modal-wrapper" id="mymodal" >
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <h3 class="review-page-title">Write Your Review</h3>
+                                                    <div class="modal-inner-area row">
+                                                        <div class="col-lg-6">
+                                                           <div class="li-review-product">
+                                                               <img src="{{product_detail.ImageUrl}}" alt="Li's Product">
+                                                               <div class="li-review-product-desc">
+                                                                   <p class="li-product-name">{{product_detail.title}}</p>
+                                                                   <p>
+                                                                       <span>{{product_detail.detail}}</span>
+                                                                   </p>
+                                                               </div>
+                                                           </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="li-review-content">
+                                                                <!-- Begin Feedback Area -->
+                                                                <div class="feedback-area">
+                                                                    <div class="feedback">
+                                                                        <h3 class="feedback-title">Our Feedback</h3>
+                                                                        <form action="{% url 'comment_add' id=product_detail.id %}" method="POST">{% csrf_token %}
+                                                                            <div class="feedback-input">
+                                                                            <p class="your-opinion">
+                                                                                <label>Your Rating</label>
+                                                                                <span>
+                                                                                    <select class="star-rating" name="rate">
+                                                                                      <option value="1" name="rate">1</option>
+                                                                                      <option value="2" name="rate">2</option>
+                                                                                      <option value="3" name="rate">3</option>
+                                                                                      <option value="4" name="rate">4</option>
+                                                                                      <option value="5" name="rate">5</option>
+                                                                                    </select>
+                                                                                </span>
+                                                                            </p>
+                                                                            <p class="feedback-form-author">
+                                                                                    <label for="author">Subject<span class="required">*</span>
+                                                                                    </label>
+                                                                                    <input id="author" name="subject" value="" size="30" aria-required="true" type="text">
+                                                                                </p>
+                                                                            <p class="feedback-form">
+                                                                                <label for="feedback">Your Review</label>
+                                                                                <textarea id="feedback" name="comment" cols="45" rows="8" aria-required="true"></textarea>
+                                                                            </p>
+                                                                            
+                                                                                {% if user.id is not None %}
+                                                                                <input type="submit" name="Submit" class="btn btn-warning">
+                                                                                {% else %}
+                                                                                <h5>You Should login First</h5>
+                                                                                {% endif %}
+
+                                                                            </div>
+
+                                                                                
+                                                                               <!--  <div class="feedback-btn pb-15">
+                                                                                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">Close</a>
+
+                                                                                </div> -->
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Feedback Area End Here -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                    <!-- Quick View | Modal Area End Here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Product Area End Here -->
             <!-- Begin Li's Laptop Product Area -->

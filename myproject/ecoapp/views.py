@@ -1,7 +1,11 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
+from django.utils.crypto import get_random_string
+
 from .models import *
+from userprofile.models import *
 from .forms import *
 # Create your views here.
 
@@ -47,6 +51,7 @@ def single_product(request,id):
     setting = Setting.objects.get(id=1)
     category = Category.objects.all()
     product_detail = Product.objects.get(id=id)
+    comment_show = Comment.objects.filter(product_id=id, status='True')
     images = Images.objects.filter(product_id=id)
     cart_product = ShopCart.objects.filter(user_id=current_user.id)
     total_amount = 0
@@ -59,6 +64,7 @@ def single_product(request,id):
         'category':category,
         'cart_product':cart_product,
         'total_amount':total_amount,
+        'comment_show':comment_show,
     }
     return render(request, 'frontend/single-product.html', context)
 
@@ -170,4 +176,87 @@ def shopping_cart_delete(request,id):
     cart_product = ShopCart.objects.filter(id = id,user_id=current_user.id)
     cart_product.delete()
     messages.warning(request, 'Delete Product from Cart')
+    return HttpResponseRedirect(url)
+
+@login_required(login_url='/userprofile/login')
+def OrderCart(request):
+    current_user = request.user
+    shoping_cart = ShopCart.objects.filter(user_id=current_user.id)
+    category = Category.objects.all()
+    totalamount = 0
+    for rs in shoping_cart:
+        totalamount += rs.quantity*rs.product.new_price
+    if request.method == 'POST':
+        form = OrderForm(request.POST,request.FILES)
+        if form.is_valid():
+            dat = Order()
+            dat.full_name = form.cleaned_data['full_name']
+            dat.address = form.cleaned_data['address']
+            dat.city = form.cleaned_data['city']
+            dat.phone = form.cleaned_data['phone']
+            dat.country = form.cleaned_data['country']
+            dat.transaction_id = form.cleaned_data['transaction_id']
+            dat.transaction_image = form.cleaned_data['transaction_image']
+            dat.user_id = current_user.id
+            dat.total = totalamount
+            dat.ip = request.META.get('REMOTE_ADDR')
+            ordercode = get_random_string(5).upper()
+            dat.code = ordercode
+            dat.save()
+
+            for rs in shoping_cart:
+                data = OrderProduct()
+                data.order_id = dat.id
+                data.product_id = rs.product_id
+                data.user_id = current_user.id
+                data.quantity = rs.quantity
+                data.price = rs.product.new_price
+                data.amount = rs.amount
+                data.save()
+
+                product = Product.objects.get(id=rs.product_id)
+                product.amount -= rs.quantity
+                product.save()
+            ShopCart.objects.filter(user_id=current_user.id).delete()
+            messages.success(request,'Your order have been complete')
+            context={'ordercode':ordercode,'category':category}
+            return render(request,'frontend/order_complete.html', context)
+        else:
+            messages.info(request, form.errors)
+            # return HttpResponseRedirect('/')
+    form = OrderForm()
+    profile = UserProfile.objects.get(user_id = current_user.id)
+    setting = Setting.objects.get(id=1)
+    category = Category.objects.all()
+    cart_product = ShopCart.objects.filter(user_id=current_user.id)
+    total_amount = 0
+    for p in cart_product:
+        total_amount += p.product.new_price*p.quantity
+    context = {
+        'setting': setting,
+        'category': category,
+        'form':form,
+        'profile':profile,
+        'shoping_cart':shoping_cart,
+        'cart_product':cart_product,
+        'total_amount':total_amount,
+    }
+    return render(request, 'frontend/order_form.html', context)
+
+def CommentAdd(request,id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        pos = CommentForm(request.POST)
+        if pos.is_valid():
+            data = Comment()
+            data.subject = pos.cleaned_data['subject']
+            data.comment = pos.cleaned_data['comment']
+            data.rate = pos.cleaned_data['rate']
+            data.ip = request.META.get('REMOTE_ADDR')
+            data.product_id = id
+            current_user = request.user
+            data.user_id = current_user.id
+            data.save()
+            messages.success(request, 'Your Message have been sent')
+            return HttpResponseRedirect(url)
     return HttpResponseRedirect(url)
